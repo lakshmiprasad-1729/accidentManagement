@@ -1,0 +1,34 @@
+target/
+.git/
+.gitignore
+*.md
+README.md
+HELP.md
+.env
+.dockerignore
+
+# IDE files
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+.classpath
+.project
+.settings/
+.springBeans
+.sts4-cache
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build files
+build/
+dist/
+nbdist/
+.nb-gradle/
+
+# Test files
+!**/src/main/**/target/
+!**/src/test/**/target/
