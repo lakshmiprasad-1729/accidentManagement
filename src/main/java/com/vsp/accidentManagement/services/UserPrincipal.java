@@ -1,29 +1,24 @@
 package com.vsp.accidentManagement.services;
 
 import com.vsp.accidentManagement.models.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-
 
 public class UserPrincipal implements UserDetails {
 
+    private User user;
 
-   public User user;
+    public UserPrincipal(User user) {
+        this.user = user;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority("USER"));
-    }
-
-    UserPrincipal(User user) {
-        this.user = user;
+        return Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
@@ -38,21 +33,26 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        return true; // Change this to return true instead of calling super
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+        return true; // Change this to return true instead of calling super
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return true; // Change this to return true instead of calling super
     }
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return true; // Change this to return true instead of calling super
+    }
+
+    // Getter for accessing the user object if needed
+    public User getUser() {
+        return user;
     }
 }

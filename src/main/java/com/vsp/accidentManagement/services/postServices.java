@@ -3,6 +3,8 @@ package com.vsp.accidentManagement.services;
 import com.vsp.accidentManagement.Repo.postRepo;
 import com.vsp.accidentManagement.models.Post;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,7 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,8 @@ public class postServices {
 
     @Autowired
     private postRepo postrepo;
+
+    private Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     @Autowired
     private cloudinaryServices cloudinaryservice;
@@ -58,7 +61,13 @@ public class postServices {
             throw new RuntimeException("Failed to upload file to Cloudinary");
         }
 
-        Post post = new Post();
+//        Post post = new Post();
 
+    }
+
+    public  void runAuth(){
+       UserPrincipal  principal = (UserPrincipal) authentication.getPrincipal();
+
+       System.out.println(principal.getUsername());
     }
 }

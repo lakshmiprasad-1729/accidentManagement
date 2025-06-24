@@ -28,4 +28,9 @@ public class postRequests {
         System.out.println(image);
          postservices.createANewPost(image);
     }
+
+    @GetMapping("/check-check")
+    public  void checkcheck(){
+        postservices.runAuth();
+    }
 }
