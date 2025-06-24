@@ -13,6 +13,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -54,15 +55,14 @@ public class securityConfig {
 
 
         http
+                .cors(cors->cors.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
                .authorizeHttpRequests(auth -> auth
                        .requestMatchers("/user/login", "/user/register").permitAll()
                        .anyRequest().authenticated()
                )
-                .httpBasic(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement((session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)));
-
-        http.addFilterBefore(jwtfilter, UsernamePasswordAuthenticationFilter.class);
+               .sessionManagement((session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)))
+               .addFilterBefore(jwtfilter, UsernamePasswordAuthenticationFilter.class);
              return   http.build();
     }
 
