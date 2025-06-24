@@ -1,9 +1,0 @@
-[build]
-builder = "nixpacks"
-
-[deploy]
-startCommand = "java -jar target/*.jar"
-restartPolicyType = "never"
-
-[build.env]
-MAVEN_OPTS = "-Xmx1024m"
