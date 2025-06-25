@@ -1,9 +1,13 @@
 package com.vsp.accidentManagement.controllers;
 
 
+import com.vsp.accidentManagement.Entities.ApiResponse;
+import com.vsp.accidentManagement.Entities.updateContent;
 import com.vsp.accidentManagement.models.Post;
 import com.vsp.accidentManagement.services.postServices;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,13 +28,29 @@ public class postRequests {
     }
 
     @PostMapping("/upload-post")
-    public void uploadPost(@RequestParam("image") MultipartFile image) throws IOException {
-        System.out.println(image);
-         postservices.createANewPost(image);
+    public ResponseEntity<ApiResponse<Post>> uploadPost(@RequestParam("image") MultipartFile image, @RequestParam("content") String content, @RequestParam("location") String location) throws IOException {
+       return  postservices.createANewPost(image,content,location);
     }
 
-    @GetMapping("/check-check")
-    public  void checkcheck(){
-        postservices.runAuth();
+    @PutMapping("/user-post/update-content/{id}")
+    public ResponseEntity<ApiResponse<Post>> updateContent(@PathVariable String id,@RequestBody updateContent content) throws IOException {
+        return  postservices.updateAPost(content.getContent(),id);
+    }
+
+    @PutMapping("/user-post/update-type/{id}/{type}")
+    public ResponseEntity<ApiResponse<Post>> updateType(@PathVariable ObjectId id,@PathVariable String type ) throws IOException {
+        return  postservices.updateTypeByAdmin(type,id);
+    }
+
+    @PutMapping("/user-post/update-statusbyemployee/{id}/{status}")
+    public ResponseEntity<ApiResponse<Post>> updateStatusByEmployee(@PathVariable ObjectId id,@PathVariable String status ) throws IOException {
+        return  postservices.updateStatusByaFieldEmployee(status,id);
+    }
+
+
+
+    @GetMapping("/check-auth")
+    public  String checkAuth(){
+        return postservices.getCurrentUsername();
     }
 }

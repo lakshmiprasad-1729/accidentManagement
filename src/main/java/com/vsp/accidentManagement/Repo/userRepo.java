@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import com.vsp.accidentManagement.models.User;
 
+
 import java.util.Optional;
 
 @Repository
@@ -14,4 +15,6 @@ import java.util.Optional;
 
 
     Optional<User> findByEmail(String email);
+
+    Optional<User> findById(String id);
 }

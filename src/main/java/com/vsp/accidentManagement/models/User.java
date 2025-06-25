@@ -1,5 +1,8 @@
 package com.vsp.accidentManagement.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -8,8 +11,10 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document(collection = "users")
 public class User {
-    
+
     @Id
+    @JsonSerialize(using = ToStringSerializer.class)
+    @JsonProperty("id")
     private ObjectId id;
 
     @Field("name")
