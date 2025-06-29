@@ -1,10 +1,14 @@
 package com.vsp.accidentManagement.models;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Component;
 
 
 @Component
+@Getter
+@Setter
 public class userDetails {
     
     public ObjectId id;

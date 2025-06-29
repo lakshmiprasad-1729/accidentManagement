@@ -44,6 +44,11 @@ public class userRequests {
         return userservice.getUserByEmail(email.getEmail());
     }
 
+    @GetMapping("/user-details/getUser")
+    userDetails getUserDetails(){
+        return userservice.getUser();
+    }
+
     @GetMapping("/user-details/allUsers")
     List<User> allUsers(){
         return userservice.getAllUsers();
