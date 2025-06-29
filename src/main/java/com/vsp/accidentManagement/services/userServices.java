@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,6 +19,7 @@ import com.vsp.accidentManagement.Repo.userRepo;
 import com.vsp.accidentManagement.models.User;
 import com.vsp.accidentManagement.models.userDetails;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,18 +74,19 @@ public class userServices {
 
         String jwttoken = jwtutil.generateToken(userLogin.getEmail());
 
-            Cookie cookie = new Cookie("auth-token", jwttoken);
 
-            // 5. Set cookie properties
-            cookie.setHttpOnly(true); // Prevents JavaScript access
-            cookie.setSecure(true);   // Ensures the cookie is sent only over HTTPS
-            cookie.setPath("/");      // Makes the cookie available to the entire application
-            cookie.setMaxAge(24 * 60 * 60); // Set cookie expiry (e.g., 24 hours)
 
-            // 6. Add the cookie to the response
-            response.addCookie(cookie);
+            ResponseCookie cookie = ResponseCookie.from("auth-token", jwttoken)
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(Duration.ofHours(24))
+                    .sameSite("None")  // Required for cross-site cookies
+                    .build();
 
-            return "login successfull";
+            response.addHeader("Set-Cookie", cookie.toString() + "; Partitioned");
+
+            return jwttoken;
 
         }
 
