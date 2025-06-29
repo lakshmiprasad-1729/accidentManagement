@@ -59,7 +59,7 @@ public class postRequests {
 //        return  postservices.updateStatusByaFieldEmployee(status,id);
 //    }
 
-    @GetMapping("/user-posts")
+    @GetMapping("/user-post/getall-userspost")
     public  ResponseEntity<ApiResponse<List<Post>>> getUserPosts(){
         return postservices.getUsersPost();
     }
