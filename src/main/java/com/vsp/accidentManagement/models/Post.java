@@ -3,18 +3,27 @@ package com.vsp.accidentManagement.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import lombok.Getter;
+import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection = "posts") // Add this annotation
+
+@Document(collection = "posts")
+@Getter
+@Setter// Add this annotation
 public class Post {
 
     @Id
     @JsonSerialize(using = ToStringSerializer.class)
     @JsonProperty("id")
     private ObjectId id;
+    @Field("name")
+    private  String name;
+    @Field("title")
+    private String title;
 
     @Field("ownerEmail")
     private String ownerEmail;
@@ -26,28 +35,38 @@ public class Post {
     private String imageUrl;
 
     @Field("location")
-    private String location;
+    private locationStructure location;
+
+    @Field("address")
+    private String address;
 
     @Field("status")
     private String status;
 
-    @Field("statusbyfieldemployee")
-    private String statusbyfieldemployee;
 
-    @Field("Type")
-    private   String type;
+    @Field("Category")
+    private   String category;
+
+    @Field("Priority Level")
+    private  String priorityLevel;
     // Add constructors
-    public Post() {}
 
-    public Post(String email, String content, String imageUrl, String location, String status,String type,String statusbyfieldemployee) {
+
+    public Post(String email, String content, String imageUrl, locationStructure location, String status,String category,String title,String priorityLevel,String address,String name) {
         this.ownerEmail = email;
         this.content = content;
         this.imageUrl = imageUrl;
         this.location = location;
         this.status = status;
-        this.type = type;
-        this.statusbyfieldemployee = statusbyfieldemployee;
+        this.category = category;
+        this.title = title;
+        this.priorityLevel = priorityLevel;
+        this.address = address;
+        this.name=name;
+
     }
+
+
 
     // Add getters and setters
     public ObjectId getId() { return id; }
@@ -62,15 +81,15 @@ public class Post {
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
-    public String getLocation() { return location; }
-    public void setLocation(String location) { this.location = location; }
+    public locationStructure getLocation() { return location; }
+    public void setLocation(locationStructure location) { this.location = location; }
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
+    public String getType() { return category; }
+    public void setType(String category) { this.category = category; }
 
-    public String getStatusbyfieldemployee(){return  statusbyfieldemployee; }
-    public void setStatusbyfieldemployee(String statusbyfieldemployee){this.statusbyfieldemployee = statusbyfieldemployee;}
-}
+   }
+
+

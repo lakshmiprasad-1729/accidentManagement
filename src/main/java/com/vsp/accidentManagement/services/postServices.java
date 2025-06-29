@@ -6,6 +6,7 @@ import com.vsp.accidentManagement.Repo.postRepo;
 import com.vsp.accidentManagement.Repo.userRepo;
 import com.vsp.accidentManagement.models.Post;
 import com.vsp.accidentManagement.models.User;
+import com.vsp.accidentManagement.models.locationStructure;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import com.vsp.accidentManagement.services.UserPrincipal;
 
@@ -46,7 +48,7 @@ public class postServices {
         return posts;
     }
 
-    public ResponseEntity<ApiResponse<Post>> createANewPost(MultipartFile file , String content, String location) throws IOException {
+    public ResponseEntity<ApiResponse<Post>> createANewPost(MultipartFile file , String content, locationStructure location,String title,String address,String category,String priorityLevel,String name) throws IOException {
 
         ApiResponse<Post> res = new ApiResponse<>();
         res.setData(null);
@@ -92,8 +94,8 @@ public class postServices {
         else {
             System.out.println("Failed to upload file to Cloudinary");
         }
-
-        Post post = new Post(principal.getUsername(),content,imageUrl,location,"pending","will be provided by admin","pending");
+//        String email, String content, String imageUrl, locationStructure location, String status,String category,String title,String priorityLevel,String address
+        Post post = new Post(principal.getUsername(),content,imageUrl,location,"pending",category,title,priorityLevel,address,name);
 
         if(post == null){
             res.setMessage("error while creating post");
@@ -160,11 +162,11 @@ public class postServices {
         res.setMessage("updated type successfully");
         res.setStatus(true);
         res.setData(savedPost);
-        return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
+        return ResponseEntity.status(HttpsURLConnection.HTTP_OK).body(res);
 
     }
 
-    public ResponseEntity<ApiResponse<Post>> updateTypeByAdmin(String status,ObjectId id){
+    public ResponseEntity<ApiResponse<Post>> updateTypeByAdmin(String status,String id){
         ApiResponse<Post> res = new ApiResponse<>();
         res.setData(null);
 
@@ -202,49 +204,49 @@ public class postServices {
         res.setMessage("updated type successfully");
         res.setStatus(true);
         res.setData(savedPost);
-        return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
+        return ResponseEntity.status(HttpsURLConnection.HTTP_OK).body(res);
     }
-
-    public ResponseEntity<ApiResponse<Post>> updateStatusByaFieldEmployee (String status,ObjectId id){
-        ApiResponse<Post> res = new ApiResponse<>();
-        res.setData(null);
-
-        Post post = postrepo.findById(id).orElse(null);
-
-        if(post == null){
-            res.setMessage("invalid post");
-            res.setStatus(false);
-            return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
-        }
-
-        User user = userrepo.findById(id).orElse(null);
-
-        if(user == null){
-            res.setMessage("unable to fetch userdetails server error");
-            res.setStatus(false);
-            return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
-        }
-
-        if(user.getRole() != "Employee"){
-            res.setMessage("user should be admin to set a type of problem");
-            res.setStatus(false);
-            return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
-        }
-        post.setStatusbyfieldemployee(status);
-
-        Post savedPost = postrepo.save(post);
-
-        if(savedPost == null){
-            res.setMessage("error while saving post");
-            res.setStatus(false);
-            return ResponseEntity.status(HttpsURLConnection.HTTP_SERVER_ERROR).body(res);
-        }
-
-        res.setMessage("updated type successfully");
-        res.setStatus(true);
-        res.setData(savedPost);
-        return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
-    }
+//
+//    public ResponseEntity<ApiResponse<Post>> updateStatusByaFieldEmployee (String status,ObjectId id){
+//        ApiResponse<Post> res = new ApiResponse<>();
+//        res.setData(null);
+//
+//        Post post = postrepo.findById(id).orElse(null);
+//
+//        if(post == null){
+//            res.setMessage("invalid post");
+//            res.setStatus(false);
+//            return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
+//        }
+//
+//        User user = userrepo.findById(id).orElse(null);
+//
+//        if(user == null){
+//            res.setMessage("unable to fetch userdetails server error");
+//            res.setStatus(false);
+//            return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
+//        }
+//
+//        if(user.getRole() != "Employee"){
+//            res.setMessage("user should be admin to set a type of problem");
+//            res.setStatus(false);
+//            return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
+//        }
+//        post.setStatusbyfieldemployee(status);
+//
+//        Post savedPost = postrepo.save(post);
+//
+//        if(savedPost == null){
+//            res.setMessage("error while saving post");
+//            res.setStatus(false);
+//            return ResponseEntity.status(HttpsURLConnection.HTTP_SERVER_ERROR).body(res);
+//        }
+//
+//        res.setMessage("updated type successfully");
+//        res.setStatus(true);
+//        res.setData(savedPost);
+//        return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
+//    }
     public String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -257,5 +259,25 @@ public class postServices {
 
 
         return principal.getUsername();
+    }
+
+    public  ResponseEntity<ApiResponse<List<Post>>> getUsersPost(){
+        ApiResponse<List<Post>> res = new ApiResponse<>();
+        res.setData(null);
+
+        String email = getCurrentUsername();
+
+      List<Post> posts = postrepo.findByOwnerEmail(email).orElse(null);
+
+        if(posts == null || posts.isEmpty()){
+            res.setMessage("error while getting post");
+            res.setStatus(false);
+            return ResponseEntity.status(HttpsURLConnection.HTTP_SERVER_ERROR).body(res);
+        }
+
+        res.setMessage("recieved posts");
+        res.setStatus(true);
+        res.setData(posts);
+        return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
     }
 }
