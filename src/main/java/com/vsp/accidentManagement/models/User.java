@@ -41,7 +41,7 @@ public class User {
     }
 
     userDetails getUserDetaails(){
-         userDetails userDetails = new userDetails(this.id, this.name, this.email, this.role);
+         userDetails userDetails = new userDetails(this.id.toString(), this.name, this.email, this.role);
          return userDetails;
     }
 

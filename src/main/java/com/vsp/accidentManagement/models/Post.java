@@ -32,8 +32,10 @@ public class Post {
     @Field("title")
     private String title;
 
-    @Field("ownerEmail")
-    private String ownerEmail;
+//    @Field("ownerEmail")
+//    private String ownerEmail;
+    @Field("ownerId")
+    private ObjectId ownerId;
 
     @Field("content")
     private String content;
@@ -66,12 +68,11 @@ public class Post {
     }
 
     // Custom constructor for creating new posts (without ID)
-    public Post(String name, String title, String ownerEmail, String content,
+    public Post(String name, String title, String content,
                 String imageUrl, LocationStructure location, String address,
-                Boolean status, String category, String priorityLevel) {
+                Boolean status, String category, String priorityLevel,ObjectId id) {
         this.name = name;
         this.title = title;
-        this.ownerEmail = ownerEmail;
         this.content = content;
         this.imageUrl = imageUrl;
         this.location = location;
@@ -79,5 +80,6 @@ public class Post {
         this.status = status;
         this.category = category;
         this.priorityLevel = priorityLevel;
+        this.ownerId = id;
     }
 }

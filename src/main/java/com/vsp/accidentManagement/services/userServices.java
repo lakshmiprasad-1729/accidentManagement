@@ -44,13 +44,14 @@ public class userServices {
 
         private PasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    public ResponseEntity<ApiResponse<userDetails>> saveUser(User user){
+    public ResponseEntity<ApiResponse<userDetails>> saveUser(RegisterRequest user){
 
-        User checkuser = userrepo.findByEmail(user.getEmail()).orElse(null);
+        Optional<User> checkuser = userrepo.findByEmail(user.getEmail());
         ApiResponse<userDetails> res = new ApiResponse<>();
         res.setData(null);
 
-        if(checkuser!=null){
+        if(checkuser.isPresent()){
+            System.out.println(checkuser.get().getName());
             res.setMessage("User with  same email already exists");
             res.setStatus(false);
             return ResponseEntity.status(HttpsURLConnection.HTTP_NOT_ACCEPTABLE).body(res);
@@ -64,10 +65,10 @@ public class userServices {
         }
 
 
-        if(user.getName() == null || user.getEmail() == null || user.getRole() == null) {
+        if(user.getName() == null || user.getEmail() == null  || user.getEmail().isEmpty()) {
 
             System.out.println("User details are incomplete.");
-            return null; 
+            return null;
         }
          String hashedPassword = encoder.encode(user.getPassword());
 
@@ -80,7 +81,9 @@ public class userServices {
             return ResponseEntity.status(HttpsURLConnection.HTTP_NOT_ACCEPTABLE).body(res);
         }
 
-        userDetails savedUserDetails = new userDetails(user.getId(),user.getName(),user.getEmail(),user.getName());
+        String id =  savedUser.getId().toString();
+
+        userDetails savedUserDetails = new userDetails(id,user.getName(),user.getEmail(),user.getName());
         res.setMessage("successfully saved user");
         res.setData(savedUserDetails);
         res.setStatus(true);
@@ -94,7 +97,9 @@ public class userServices {
                 .orElseThrow(()-> new RuntimeException(("user not found" + userId)));
 
 
-        return new userDetails(byId.getId(),byId.getName(),byId.getEmail(),byId.getRole());
+        String id =  byId.getId().toString();
+
+        return new userDetails(id,byId.getName(),byId.getEmail(),byId.getRole());
     }
 
     public String verifyUser(LoginRequest userLogin, HttpServletResponse response){
@@ -107,15 +112,15 @@ public class userServices {
 
 
 
-            ResponseCookie cookie = ResponseCookie.from("auth-token", jwttoken)
-                    .httpOnly(true)
-                    .secure(true)
-                    .path("/")
-                    .maxAge(Duration.ofHours(24))
-                    .sameSite("None")  // Required for cross-site cookies
-                    .build();
-
-            response.addHeader("Set-Cookie", cookie.toString() + "; Partitioned");
+//            ResponseCookie cookie = ResponseCookie.from("auth-token", jwttoken)
+//                    .httpOnly(true)
+//                    .secure(true)
+//                    .path("/")
+//                    .maxAge(Duration.ofHours(24))
+//                    .sameSite("None")  // Required for cross-site cookies
+//                    .build();
+//
+//            response.addHeader("Set-Cookie", cookie.toString() + "; Partitioned");
 
             return jwttoken;
 
@@ -141,7 +146,10 @@ public class userServices {
             User user = userrepo.findByEmail(email)
                     .orElseThrow(()-> new RuntimeException("user not found"));
 
-            return new userDetails(user.getId(),user.getName(),user.getEmail(),user.getRole());
+
+            String id =  user.getId().toString();
+
+            return new userDetails(id,user.getName(),user.getEmail(),user.getRole());
 
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
@@ -160,7 +168,7 @@ public class userServices {
                  System.out.println("user not found");
              }
 
-             return new userDetails(user.get().getId(),user.get().getName(),user.get().getEmail(),user.get().getRole());
+             return new userDetails(user.get().getId().toString(),user.get().getName(),user.get().getEmail(),user.get().getRole());
          }
          catch (RuntimeException e){
              System.out.println(e);

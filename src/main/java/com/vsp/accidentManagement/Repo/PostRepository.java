@@ -15,7 +15,7 @@ public interface PostRepository extends MongoRepository<Post, ObjectId> {
 
 
 
-    List<Post> findByOwnerEmail(String ownerEmail);
+   List<Post> findByOwnerId(ObjectId id);
 
 
 }

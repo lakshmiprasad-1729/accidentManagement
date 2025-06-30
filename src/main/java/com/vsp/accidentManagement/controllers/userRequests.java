@@ -1,17 +1,13 @@
 package com.vsp.accidentManagement.controllers;
 
 import com.vsp.accidentManagement.Entities.ApiResponse;
-import com.vsp.accidentManagement.models.LoginRequest;
-import com.vsp.accidentManagement.models.emailDetails;
+import com.vsp.accidentManagement.models.*;
 import com.vsp.accidentManagement.services.userServices;
 import jakarta.servlet.http.HttpServletResponse;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import com.vsp.accidentManagement.models.User;
-import com.vsp.accidentManagement.models.userDetails;
 
 import java.util.List;
 
@@ -23,7 +19,7 @@ public class userRequests {
     userServices userservice;
 
     @PostMapping("/register")
-    ResponseEntity<ApiResponse<userDetails>> Register(@RequestBody  User user){
+    ResponseEntity<ApiResponse<userDetails>> Register(@RequestBody RegisterRequest user){
       return userservice.saveUser(user);
     }
 

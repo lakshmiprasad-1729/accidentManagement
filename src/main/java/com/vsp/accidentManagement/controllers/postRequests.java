@@ -50,10 +50,10 @@ public class postRequests {
         return  postservices.updateAPost(content.getContent(),newid);
     }
 
-    @PutMapping("/user-post/update-status/{id}/{type}")
-    public ResponseEntity<ApiResponse<Post>> updateStatus(@PathVariable String id,@PathVariable Boolean status ) throws IOException {
+    @PutMapping("/user-post/update-status/{id}")
+    public ResponseEntity<ApiResponse<Post>> updateStatus(@PathVariable String id ) throws IOException {
         ObjectId newid = new ObjectId(id);
-        return  postservices.updateTypeByAdmin(status,newid);
+        return  postservices.updateTypeByAdmin(true,newid);
     }
 
 
@@ -62,6 +62,11 @@ public class postRequests {
     public  ResponseEntity<ApiResponse<List<Post>>> getUserPosts(){
         System.out.println("entry1");
         return postservices.getUsersPost();
+    }
+
+    @GetMapping("/user-post/{id}")
+    public Post findPostByuserId(@PathVariable String id){
+        return postservices.getPostByUserId(id);
     }
 
 

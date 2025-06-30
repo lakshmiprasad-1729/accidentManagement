@@ -3,8 +3,10 @@ package  com.vsp.accidentManagement.Entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class ApiResponse<T> {
     @JsonProperty("status")
     private boolean status;
@@ -22,26 +24,9 @@ public class ApiResponse<T> {
         this.data = data;
     }
 
-    public ApiResponse(){
+    public ApiResponse() {
 
     }
 
-    public  void setStatus(Boolean success) {
-        this.status = success;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-    }
 }
 
-//@PostMapping("/users")
-//public ResponseEntity<ApiResponse<User>> createUser(@RequestBody User user) {
-//    User savedUser = userService.save(user);
-//    ApiResponse<User> response = new ApiResponse<>(true, "User created successfully", savedUser);
-//    return ResponseEntity.status(HttpStatus.CREATED).body(response);
-//}

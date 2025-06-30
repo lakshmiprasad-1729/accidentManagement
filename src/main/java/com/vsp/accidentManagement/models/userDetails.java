@@ -11,14 +11,14 @@ import org.springframework.stereotype.Component;
 @Setter
 public class userDetails {
     
-    public ObjectId id;
+    public String id;
     public String name;
     public String email;
     public String role; 
 
     public userDetails() {
     }
-    public userDetails(ObjectId id, String name, String email, String role) {
+    public userDetails(String id, String name, String email, String role) {
         this.id = id;
         this.name = name;
         this.email = email;

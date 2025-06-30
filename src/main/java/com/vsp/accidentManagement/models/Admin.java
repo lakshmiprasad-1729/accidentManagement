@@ -26,9 +26,9 @@ public class Admin {
     private  String adminEmail;
 
     @Field("addedBy")
-    private  String addedBy;
+    private  ObjectId addedBy;
 
-   Admin(String adminEmail, String addedBy) {
+   public  Admin(String adminEmail, ObjectId addedBy) {
        this.adminEmail = adminEmail;
         this.addedBy = addedBy;
    }

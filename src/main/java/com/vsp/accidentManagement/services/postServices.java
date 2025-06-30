@@ -87,9 +87,17 @@ public class postServices {
             System.out.println("Failed to upload file to Cloudinary");
         }
 
-        Post post = new Post( name,  title, principal.getUsername(),  content,
+        User user = userrepo.findByEmail(principal.getUsername()).orElse(null);
+
+        if(user == null){
+            res.setMessage("internal server error");
+            res.setStatus(false);
+            return ResponseEntity.status(HttpsURLConnection.HTTP_SERVER_ERROR).body(res);
+        }
+
+        Post post = new Post( name,  title,  content,
                  imageUrl,  location,  address,
-                 false,  category,  priorityLevel);
+                 false,  category,  priorityLevel,user.getId());
 
         if(post == null){
             res.setMessage("error while creating post");
@@ -129,8 +137,7 @@ public class postServices {
            return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
        }
 
-       User user = userrepo.findByEmail(post.getOwnerEmail()).orElse(null);
-       System.out.println();
+       User user = userrepo.findById(post.getOwnerId()).orElse(null);
 
        if(user == null){
            res.setMessage("unable to fetch userdetails server error");
@@ -138,7 +145,7 @@ public class postServices {
            return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
        }
 
-       if(!Objects.equals(user.getRole(), "admin")){
+       if(!user.getRole().equals("admin")){
            res.setMessage("user should be admin to set a type of problem");
            res.setStatus(false);
            return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
@@ -172,15 +179,25 @@ public class postServices {
             return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
         }
 
-        User user = userrepo.findById(id).orElse(null);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            res.setMessage("unauthorized");
+            res.setStatus(false);
+            return ResponseEntity.status(HttpsURLConnection.HTTP_UNAUTHORIZED).body(res);
+        }
+
+        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+
+        User user = userrepo.findByEmail(principal.getUsername()).orElse(null);
 
         if(user == null){
             res.setMessage("unable to fetch userdetails server error");
             res.setStatus(false);
-            return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
+            return ResponseEntity.status(HttpsURLConnection.HTTP_SERVER_ERROR).body(res);
         }
 
-        if(user.getRole() != "admin"){
+        if(!user.getRole().equals("admin")){
             res.setMessage("user should be admin to set a type of problem");
             res.setStatus(false);
             return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
@@ -222,7 +239,15 @@ public class postServices {
 
         String email = getCurrentUsername();
 
-      List<Post> posts = postrepo.findByOwnerEmail(email);
+        User user = userrepo.findByEmail(email).orElse(null);
+
+        if(user == null){
+            res.setMessage("error while fetching userdetails in post");
+            res.setStatus(false);
+            return ResponseEntity.status(HttpsURLConnection.HTTP_SERVER_ERROR).body(res);
+        }
+
+      List<Post> posts = postrepo.findByOwnerId(user.getId());
 
         if(posts == null ){
             res.setMessage("error while getting post");
@@ -233,6 +258,18 @@ public class postServices {
         res.setMessage("recieved posts");
         res.setStatus(true);
         res.setData(posts);
-        return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
+        return ResponseEntity.status(HttpsURLConnection.HTTP_OK).body(res);
+    }
+    public Post getPostByUserId(String id){
+
+        if(id == null){
+            return null;
+        }
+
+        ObjectId postId = new ObjectId(id);
+        Post userPost = postrepo.findById(postId).orElse(null);
+
+        return userPost;
+
     }
 }
