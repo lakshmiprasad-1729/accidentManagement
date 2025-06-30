@@ -23,7 +23,7 @@ public class userRequests {
     userServices userservice;
 
     @PostMapping("/register")
-    ResponseEntity<ApiResponse<userDetails>> Login(@RequestBody  User user){
+    ResponseEntity<ApiResponse<userDetails>> Register(@RequestBody  User user){
       return userservice.saveUser(user);
     }
 
