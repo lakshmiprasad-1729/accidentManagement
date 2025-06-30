@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vsp.accidentManagement.Entities.ApiResponse;
 import com.vsp.accidentManagement.Entities.updateContent;
 import com.vsp.accidentManagement.models.Post;
-import com.vsp.accidentManagement.models.locationStructure;
+import com.vsp.accidentManagement.models.LocationStructure;
 import com.vsp.accidentManagement.services.postServices;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +34,9 @@ public class postRequests {
     public ResponseEntity<ApiResponse<Post>> uploadPost(@RequestParam("image") MultipartFile image, @RequestParam("content") String content, @RequestParam("location") String location,String title,
                                                         String address,String category,String priorityLevel,String name) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        locationStructure loc = null;
+        LocationStructure loc = null;
         try {
-            loc = objectMapper.readValue(location, locationStructure.class);
+            loc = objectMapper.readValue(location, LocationStructure.class);
         } catch (JsonProcessingException e) {
             // Handle parsing error
             System.out.println(e.getMessage());
@@ -46,21 +46,21 @@ public class postRequests {
 
     @PutMapping("/user-post/update-content/{id}")
     public ResponseEntity<ApiResponse<Post>> updateContent(@PathVariable String id,@RequestBody updateContent content) throws IOException {
-        return  postservices.updateAPost(content.getContent(),id);
+        ObjectId newid = new ObjectId(id);
+        return  postservices.updateAPost(content.getContent(),newid);
     }
 
     @PutMapping("/user-post/update-type/{id}/{type}")
     public ResponseEntity<ApiResponse<Post>> updateType(@PathVariable String id,@PathVariable String type ) throws IOException {
-        return  postservices.updateTypeByAdmin(type,id);
+        ObjectId newid = new ObjectId(id);
+        return  postservices.updateTypeByAdmin(type,newid);
     }
 
-//    @PutMapping("/user-post/update-statusbyemployee/{id}/{status}")
-//    public ResponseEntity<ApiResponse<Post>> updateStatusByEmployee(@PathVariable ObjectId id,@PathVariable String status ) throws IOException {
-//        return  postservices.updateStatusByaFieldEmployee(status,id);
-//    }
+
 
     @GetMapping("/user-post/getall-userspost")
     public  ResponseEntity<ApiResponse<List<Post>>> getUserPosts(){
+        System.out.println("entry1");
         return postservices.getUsersPost();
     }
 

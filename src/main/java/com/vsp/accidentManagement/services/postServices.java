@@ -1,12 +1,11 @@
 package com.vsp.accidentManagement.services;
 
-import com.cloudinary.Api;
 import com.vsp.accidentManagement.Entities.ApiResponse;
-import com.vsp.accidentManagement.Repo.postRepo;
+import com.vsp.accidentManagement.Repo.PostRepository;
 import com.vsp.accidentManagement.Repo.userRepo;
 import com.vsp.accidentManagement.models.Post;
 import com.vsp.accidentManagement.models.User;
-import com.vsp.accidentManagement.models.locationStructure;
+import com.vsp.accidentManagement.models.LocationStructure;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +22,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-
-import com.vsp.accidentManagement.services.UserPrincipal;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -33,7 +29,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class postServices {
 
     @Autowired
-    private postRepo postrepo;
+    private PostRepository postrepo;
 
     @Autowired
     private userRepo userrepo;
@@ -48,7 +44,7 @@ public class postServices {
         return posts;
     }
 
-    public ResponseEntity<ApiResponse<Post>> createANewPost(MultipartFile file , String content, locationStructure location,String title,String address,String category,String priorityLevel,String name) throws IOException {
+    public ResponseEntity<ApiResponse<Post>> createANewPost(MultipartFile file , String content, LocationStructure location, String title, String address, String category, String priorityLevel, String name) throws IOException {
 
         ApiResponse<Post> res = new ApiResponse<>();
         res.setData(null);
@@ -82,11 +78,7 @@ public class postServices {
                 (String) map.get("url");
 
 
-        if(imageUrl == null){
-            res.setMessage("error while saving image");
-            res.setStatus(false);
-            return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
-        }
+
 
         if(imageUrl != null){
             Files.delete(filePath);
@@ -94,8 +86,10 @@ public class postServices {
         else {
             System.out.println("Failed to upload file to Cloudinary");
         }
-//        String email, String content, String imageUrl, locationStructure location, String status,String category,String title,String priorityLevel,String address
-        Post post = new Post(principal.getUsername(),content,imageUrl,location,"pending",category,title,priorityLevel,address,name);
+
+        Post post = new Post( name,  title, principal.getUsername(),  content,
+                 imageUrl,  location,  address,
+                 "pending",  category,  priorityLevel);
 
         if(post == null){
             res.setMessage("error while creating post");
@@ -123,7 +117,7 @@ public class postServices {
 
     }
 
-    public ResponseEntity<ApiResponse<Post>> updateAPost(String content, String id) throws IOException {
+    public ResponseEntity<ApiResponse<Post>> updateAPost(String content, ObjectId id) throws IOException {
         ApiResponse<Post> res = new ApiResponse<>();
         res.setData(null);
 
@@ -135,7 +129,7 @@ public class postServices {
            return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
        }
 
-       User user = userrepo.findByEmail(post.ownerEmail()).orElse(null);
+       User user = userrepo.findByEmail(post.getOwnerEmail()).orElse(null);
        System.out.println();
 
        if(user == null){
@@ -166,7 +160,7 @@ public class postServices {
 
     }
 
-    public ResponseEntity<ApiResponse<Post>> updateTypeByAdmin(String status,String id){
+    public ResponseEntity<ApiResponse<Post>> updateTypeByAdmin(String status,ObjectId id){
         ApiResponse<Post> res = new ApiResponse<>();
         res.setData(null);
 
@@ -206,47 +200,7 @@ public class postServices {
         res.setData(savedPost);
         return ResponseEntity.status(HttpsURLConnection.HTTP_OK).body(res);
     }
-//
-//    public ResponseEntity<ApiResponse<Post>> updateStatusByaFieldEmployee (String status,ObjectId id){
-//        ApiResponse<Post> res = new ApiResponse<>();
-//        res.setData(null);
-//
-//        Post post = postrepo.findById(id).orElse(null);
-//
-//        if(post == null){
-//            res.setMessage("invalid post");
-//            res.setStatus(false);
-//            return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
-//        }
-//
-//        User user = userrepo.findById(id).orElse(null);
-//
-//        if(user == null){
-//            res.setMessage("unable to fetch userdetails server error");
-//            res.setStatus(false);
-//            return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
-//        }
-//
-//        if(user.getRole() != "Employee"){
-//            res.setMessage("user should be admin to set a type of problem");
-//            res.setStatus(false);
-//            return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
-//        }
-//        post.setStatusbyfieldemployee(status);
-//
-//        Post savedPost = postrepo.save(post);
-//
-//        if(savedPost == null){
-//            res.setMessage("error while saving post");
-//            res.setStatus(false);
-//            return ResponseEntity.status(HttpsURLConnection.HTTP_SERVER_ERROR).body(res);
-//        }
-//
-//        res.setMessage("updated type successfully");
-//        res.setStatus(true);
-//        res.setData(savedPost);
-//        return ResponseEntity.status(HttpsURLConnection.HTTP_BAD_REQUEST).body(res);
-//    }
+
     public String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -268,9 +222,9 @@ public class postServices {
 
         String email = getCurrentUsername();
 
-      List<Post> posts = postrepo.findByOwnerEmail(email).orElse(null);
+      List<Post> posts = postrepo.findByOwnerEmail(email);
 
-        if(posts == null || posts.isEmpty()){
+        if(posts == null ){
             res.setMessage("error while getting post");
             res.setStatus(false);
             return ResponseEntity.status(HttpsURLConnection.HTTP_SERVER_ERROR).body(res);

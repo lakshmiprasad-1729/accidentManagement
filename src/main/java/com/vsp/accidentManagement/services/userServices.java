@@ -1,12 +1,15 @@
 package com.vsp.accidentManagement.services;
 
-import com.vsp.accidentManagement.models.LoginRequest;
+import com.vsp.accidentManagement.Entities.ApiResponse;
+import com.vsp.accidentManagement.Repo.AdminRepository;
+import com.vsp.accidentManagement.models.*;
 import com.vsp.accidentManagement.utilities.JWTutil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,15 +19,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.vsp.accidentManagement.Repo.userRepo;
-import com.vsp.accidentManagement.models.User;
-import com.vsp.accidentManagement.models.userDetails;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class userServices {
+
+        @Autowired
+        private AdminRepository adminrepo;
 
         @Autowired
         private userRepo  userrepo;
@@ -39,7 +44,24 @@ public class userServices {
 
         private PasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    public  userDetails saveUser(User user){
+    public ResponseEntity<ApiResponse<userDetails>> saveUser(User user){
+
+        User checkuser = userrepo.findByEmail(user.getEmail()).orElse(null);
+        ApiResponse<userDetails> res = new ApiResponse<>();
+        res.setData(null);
+
+        if(checkuser!=null){
+            res.setMessage("User with  same email already exists");
+            res.setStatus(false);
+            return ResponseEntity.status(HttpsURLConnection.HTTP_NOT_ACCEPTABLE).body(res);
+        }
+
+        String role = "guest";
+        Admin admin =  adminrepo.findByAdminEmail(user.getEmail());
+
+        if(admin!=null && admin.getAdminEmail().equals(user.getEmail())){
+            role = "admin";
+        }
 
 
         if(user.getName() == null || user.getEmail() == null || user.getRole() == null) {
@@ -49,11 +71,20 @@ public class userServices {
         }
          String hashedPassword = encoder.encode(user.getPassword());
 
-        User userdetails =  new User(user.getName(),user.getEmail(),hashedPassword,user.getRole());
+        User userdetails =  new User(user.getName(),user.getEmail(),hashedPassword,role);
         User savedUser =  userrepo.save(userdetails);
 
+        if(savedUser==null){
+            res.setMessage("error while saving User");
+            res.setStatus(false);
+            return ResponseEntity.status(HttpsURLConnection.HTTP_NOT_ACCEPTABLE).body(res);
+        }
+
         userDetails savedUserDetails = new userDetails(user.getId(),user.getName(),user.getEmail(),user.getName());
-         return savedUserDetails;
+        res.setMessage("successfully saved user");
+        res.setData(savedUserDetails);
+        res.setStatus(true);
+         return ResponseEntity.status(HttpsURLConnection.HTTP_OK).body(res);
     }
 
 

@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class locationStructure{
+public class LocationStructure {
 
     private float lat;
     private float lng;

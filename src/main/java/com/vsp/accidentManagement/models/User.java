@@ -28,7 +28,7 @@ public class User {
     private String password;
 
     @Field("role")
-    private String role; // e.g., "admin", "user"
+    private String role;
 
     public User() {
     }
