@@ -48,7 +48,7 @@ public class Post {
     private String address;
 
     @Field("status")
-    private String status;
+    private Boolean status;
 
     @Field("category")
     private String category;
@@ -68,7 +68,7 @@ public class Post {
     // Custom constructor for creating new posts (without ID)
     public Post(String name, String title, String ownerEmail, String content,
                 String imageUrl, LocationStructure location, String address,
-                String status, String category, String priorityLevel) {
+                Boolean status, String category, String priorityLevel) {
         this.name = name;
         this.title = title;
         this.ownerEmail = ownerEmail;

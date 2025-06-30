@@ -89,7 +89,7 @@ public class postServices {
 
         Post post = new Post( name,  title, principal.getUsername(),  content,
                  imageUrl,  location,  address,
-                 "pending",  category,  priorityLevel);
+                 false,  category,  priorityLevel);
 
         if(post == null){
             res.setMessage("error while creating post");
@@ -160,7 +160,7 @@ public class postServices {
 
     }
 
-    public ResponseEntity<ApiResponse<Post>> updateTypeByAdmin(String status,ObjectId id){
+    public ResponseEntity<ApiResponse<Post>> updateTypeByAdmin(Boolean status,ObjectId id){
         ApiResponse<Post> res = new ApiResponse<>();
         res.setData(null);
 

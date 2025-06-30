@@ -70,7 +70,7 @@ public class securityConfig {
         return http.build();
     }
 
-    @Value("${cors.allowed-origins:http://localhost:3000}")
+    @Value("${cors.allowed-origins:http://localhost:5173}")
     private String[] allowedOrigins;
 
     @Bean
