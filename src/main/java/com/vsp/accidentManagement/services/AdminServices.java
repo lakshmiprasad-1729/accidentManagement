@@ -9,7 +9,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 
-    @RestController
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
 public class AdminServices {
 
         @Autowired
@@ -44,5 +47,17 @@ public class AdminServices {
             System.out.println(newadmin.getAdminEmail());
 
             return newadmin;
+        }
+
+        public List<String> getAllAdminsEmail(){
+            List<Admin> usersWithEmailOnly = adminrepo.findAllEmails();
+
+            // Use a Java Stream to extract the emails into a List<String>.
+            List<String> emailList = usersWithEmailOnly.stream()
+                    .map(Admin::getAdminEmail)
+                    .collect(Collectors.toList());
+
+
+            return emailList;
         }
 }
