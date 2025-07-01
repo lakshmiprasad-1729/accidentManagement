@@ -78,7 +78,7 @@ public class securityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // Fix: Use specific origins instead of "*" when allowCredentials is true
-        configuration.setAllowedOrigins(Arrays.asList("https://accident-managent-frontend.vercel.app"));
+        configuration.setAllowedOrigins(Arrays.asList("https://accident-managent-frontend.vercel.app","http://localhost:5173"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
