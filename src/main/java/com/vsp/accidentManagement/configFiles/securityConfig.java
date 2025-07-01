@@ -24,6 +24,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -78,7 +79,7 @@ public class securityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // Fix: Use specific origins instead of "*" when allowCredentials is true
-        configuration.setAllowedOrigins(Arrays.asList("https://accident-managent-frontend.vercel.app","http://localhost:5173"));
+        configuration.setAllowedOrigins(List.of("https://accident-managent-frontend.vercel.app"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
