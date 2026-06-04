@@ -17,4 +17,6 @@ public interface AdminRepository extends MongoRepository<Admin, ObjectId> {
     @Query(value="{}", fields="{ 'adminEmail' : 1, '_id' : 0 }")
     List<Admin> findAllEmails();
 
+    void deleteByAdminEmail(String adminEmail);
+
 }

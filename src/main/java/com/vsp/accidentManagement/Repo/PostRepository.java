@@ -17,5 +17,6 @@ public interface PostRepository extends MongoRepository<Post, ObjectId> {
 
    List<Post> findByOwnerId(ObjectId id);
 
+   List<Post> findByStatus(Boolean status);
 
 }

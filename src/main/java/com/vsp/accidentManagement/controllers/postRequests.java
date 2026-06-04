@@ -31,8 +31,8 @@ public class postRequests {
     }
 
     @PostMapping("/upload-post")
-    public ResponseEntity<ApiResponse<Post>> uploadPost(@RequestParam("image") MultipartFile image, @RequestParam("content") String content, @RequestParam("location") String location,String title,
-                                                        String address,String category,String priorityLevel,String name) throws IOException {
+    public ResponseEntity<ApiResponse<Post>> uploadPost(@RequestParam("image") MultipartFile image, @RequestParam("content") String content, @RequestParam("location") String location, @RequestParam("title") String title,
+                                                        @RequestParam("address") String address, @RequestParam("category") String category, @RequestParam("priorityLevel") String priorityLevel, @RequestParam("name") String name) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         LocationStructure loc = null;
         try {
@@ -56,8 +56,6 @@ public class postRequests {
         return  postservices.updateTypeByAdmin(true,newid);
     }
 
-
-
     @GetMapping("/user-post/getall-userspost")
     public  ResponseEntity<ApiResponse<List<Post>>> getUserPosts(){
         System.out.println("entry1");
@@ -69,6 +67,21 @@ public class postRequests {
         return postservices.getPostByUserId(id);
     }
 
+    @DeleteMapping("/user-post/delete/{id}")
+    public ResponseEntity<ApiResponse<String>> deletePost(@PathVariable String id) {
+        ObjectId newid = new ObjectId(id);
+        return postservices.deletePost(newid);
+    }
+
+    @GetMapping("/approved")
+    public ResponseEntity<ApiResponse<List<Post>>> getApprovedPosts() {
+        return postservices.getApprovedPosts();
+    }
+
+    @GetMapping("/pending")
+    public ResponseEntity<ApiResponse<List<Post>>> getPendingPosts() {
+        return postservices.getPendingPosts();
+    }
 
     @GetMapping("/check-auth")
     public  String checkAuth(){

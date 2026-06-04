@@ -1,8 +1,11 @@
 package com.vsp.accidentManagement.controllers;
 
+import com.vsp.accidentManagement.Entities.ApiResponse;
+import com.vsp.accidentManagement.Entities.DashboardStats;
 import com.vsp.accidentManagement.models.Admin;
 import com.vsp.accidentManagement.services.AdminServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,4 +27,13 @@ public class AdminRequests {
         return adminservices.getAllAdminsEmail();
     }
 
+    @DeleteMapping("/remove-admin/{email}")
+    public ResponseEntity<ApiResponse<String>> removeAdmin(@PathVariable String email) {
+        return adminservices.removeAdmin(email);
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<ApiResponse<DashboardStats>> getDashboardStats() {
+        return adminservices.getDashboardStats();
+    }
 }

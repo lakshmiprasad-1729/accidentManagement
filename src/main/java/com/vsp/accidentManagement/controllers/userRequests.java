@@ -27,6 +27,7 @@ public class userRequests {
     String login(@RequestBody LoginRequest userLogin, HttpServletResponse response){
         return userservice.verifyUser(userLogin,response);
     }
+
     @GetMapping
     String greeting(){
         return "welcome users page";
@@ -51,6 +52,20 @@ public class userRequests {
     List<User> allUsers(){
         return userservice.getAllUsers();
     }
-    
-}
 
+    @PutMapping("/update-profile")
+    ResponseEntity<ApiResponse<userDetails>> updateProfile(@RequestBody UpdateProfileRequest profileRequest) {
+        return userservice.updateProfile(profileRequest);
+    }
+
+    @PutMapping("/change-password")
+    ResponseEntity<ApiResponse<String>> changePassword(@RequestBody ChangePasswordRequest passwordRequest) {
+        return userservice.changePassword(passwordRequest);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    ResponseEntity<ApiResponse<String>> deleteUser(@PathVariable String id) {
+        ObjectId userId = new ObjectId(id);
+        return userservice.deleteUser(userId);
+    }
+}
